@@ -219,6 +219,10 @@ fn make_libsodium(target: &str, source_dir: &Path, install_dir: &Path) -> PathBu
     } else if target.contains("i686") {
         compiler += " -m32 -maes";
         cflags += " -march=i686";
+    } else if target.contains("wasi") {
+        // https://github.com/jedisct1/libsodium/blob/3a99e1ec8a673928ea83657143a522dabacf3898/dist-build/wasm32-wasi.sh#L9-L13
+        compiler = String::from("zig cc");
+        cflags += "--target=wasm32-wasi -O2"
     }
 
     let help = if cross_compiling {
@@ -242,6 +246,13 @@ fn make_libsodium(target: &str, source_dir: &Path, install_dir: &Path) -> PathBu
     }
     if env::var("SODIUM_DISABLE_PIE").is_ok() {
         configure_cmd.arg("--disable-pie");
+    }
+    if target.contains("wasi") {
+        configure_cmd
+            .env("CPPFLAGS", "-DED25519_NONDETERMINISTIC=1")
+            .env("LDFLAGS", "-s -Wl,--stack-first")
+            .env("AR", "zig ar")
+            .env("RANLIB", "zig ranlib");
     }
     let configure_status = configure_cmd
         .current_dir(&source_dir)
