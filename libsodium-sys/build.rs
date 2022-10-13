@@ -252,7 +252,9 @@ fn make_libsodium(target: &str, source_dir: &Path, install_dir: &Path) -> PathBu
             .env("CPPFLAGS", "-DED25519_NONDETERMINISTIC=1")
             .env("LDFLAGS", "-s -Wl,--stack-first")
             .env("AR", "zig ar")
-            .env("RANLIB", "zig ranlib");
+            .env("RANLIB", "zig ranlib")
+            .arg("--enable-ssp=no")
+            .arg("--without-pthreads");
     }
     let configure_status = configure_cmd
         .current_dir(&source_dir)
