@@ -253,7 +253,7 @@ fn make_libsodium(target: &str, source_dir: &Path, install_dir: &Path) -> PathBu
             .env("LDFLAGS", "-s -Wl,--stack-first")
             .env("AR", "zig ar")
             .env("RANLIB", "zig ranlib")
-            .arg("--enable-ssp=no")
+            .arg("--disable-ssp")
             .arg("--without-pthreads");
     }
     let configure_status = configure_cmd
@@ -261,7 +261,7 @@ fn make_libsodium(target: &str, source_dir: &Path, install_dir: &Path) -> PathBu
         .arg(&prefix_arg)
         .arg(&libdir_arg)
         .arg(&host_arg)
-        .arg("--enable-shared=no")
+        .arg("--disable-shared")
         .status()
         .unwrap_or_else(|error| {
             panic!("Failed to run './configure': {}\n{}", error, help);
