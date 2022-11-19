@@ -222,7 +222,7 @@ fn make_libsodium(target: &str, source_dir: &Path, install_dir: &Path) -> PathBu
     } else if target.contains("wasi") {
         // https://github.com/jedisct1/libsodium/blob/3a99e1ec8a673928ea83657143a522dabacf3898/dist-build/wasm32-wasi.sh#L9-L13
         compiler = String::from("zig cc");
-        cflags += "--target=wasm32-wasi -O2"
+        cflags += " --target=wasm32-wasi -O2";
     }
 
     let help = if cross_compiling {
